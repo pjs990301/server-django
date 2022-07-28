@@ -1,9 +1,15 @@
 from rest_framework import viewsets
-from .serializers import PostSerializer
+from .serializers import UserSerializer
+from .serializers import ActivitySerializer
 from .models import Users
+from .models import Activity
 
 
-class PostViewset(viewsets.ModelViewSet):
+class UserViewSet(viewsets.ModelViewSet):
     queryset = Users.objects.all()
-    serializer_class = PostSerializer
+    serializer_class = UserSerializer
 
+
+class ActivityViewSet(viewsets.ModelViewSet):
+    queryset = Activity.objects.all()
+    serializer_class = ActivitySerializer
