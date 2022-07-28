@@ -16,10 +16,10 @@ class Users(models.Model):
 class Activity(models.Model):
     userId = models.ForeignKey(Users, on_delete=models.CASCADE)
     date = models.DateField(default=datetime.datetime.now().strftime('%Y-%m-%d'))
-    warning_count = models.IntegerField(default=0)
-    activity_count = models.IntegerField(default=0)
-    speaker_count = models.IntegerField(default=0)
-    fall_count = models.IntegerField(default=0)
+    warning_count = models.PositiveIntegerField(default=0)
+    activity_count = models.PositiveIntegerField(default=0)
+    speaker_count = models.PositiveIntegerField(default=0)
+    fall_count = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return self.userID
+        return self.userId_id
