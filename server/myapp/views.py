@@ -1,8 +1,9 @@
 from django.http import JsonResponse
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
-from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
+from rest_framework.views import APIView
 
 from .serializers import UserSerializer
 from .serializers import ActivitySerializer
@@ -22,7 +23,7 @@ class ActivityListViewSet(viewsets.ModelViewSet):
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def user_detail(request, user_id):
-    user_info = Users.objects.filter(user_id=user_id).first()
+    user_info = get_object_or_404(Users, user_id=user_id)
     if not user_info:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -40,3 +41,5 @@ def user_detail(request, user_id):
     elif request.method == 'DELETE':
         user_info.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
