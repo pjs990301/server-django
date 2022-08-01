@@ -26,7 +26,7 @@ from myapp import views
 Swagger
 """
 
-schema_view_v1 = get_schema_view(
+schema_view = get_schema_view(
     openapi.Info(
         title="MoWa API",
         default_version='v1',
@@ -42,16 +42,18 @@ router.register(r'user', views.UserListViewSet)
 router.register(r'activity', views.ActivityListViewSet)
 
 urlpatterns = [
-    re_path(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-
-    re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view_v1.without_ui(cache_timeout=0), name='schema-json'),
-    re_path(r'^swagger/$', schema_view_v1.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    re_path(r'^redoc/$', schema_view_v1.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-    path('', include('myapp.urls')),
-
     path('admin/', admin.site.urls),
 
-    path('user/all', views.UserListViewSet.as_view({'get': 'list', 'post': 'create'})),
-    path('activity/all', views.ActivityListViewSet.as_view({'get': 'list', 'post': 'create'})),
+    re_path(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+
+    re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+
+    path('', include('myapp.urls')),
+
+
+
+
 
 ]

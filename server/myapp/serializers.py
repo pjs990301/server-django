@@ -6,11 +6,11 @@ from .models import Activity
 class ActivitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Activity
-        fields = ('userId', 'date', 'warning_count', 'activity_count', 'speaker_count', 'fall_count')
+        fields = ('user_id', 'date', 'warning_count', 'activity_count', 'speaker_count', 'fall_count')
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
-        fields = ('userId', 'userName')
+        fields = ('user_id', 'user_name')
 
