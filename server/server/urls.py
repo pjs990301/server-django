@@ -28,9 +28,9 @@ Swagger
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="MoWa API",
+        title="MoWA API",
         default_version='v1',
-        description="시스템 API",
+        description="MoWA API\nGithub Link : https://github.com/GachonMoWA",
         terms_of_service="https://www.google.com/policies/terms/",
     ),
     public=True,
