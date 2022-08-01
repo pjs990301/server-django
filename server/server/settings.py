@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 import pymysql
+
 pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -29,7 +30,7 @@ DEBUG = True
 APPEND_SLASH = False
 
 # ALLOWED_HOSTS = ['13.209.45.223']
-ALLOWED_HOSTS = ['127.0.0.1', '.ap-northeast-2.compute.amazonaws.com', '43.200.89.245']
+ALLOWED_HOSTS = ['127.0.0.1', '.ap-northeast-2.compute.amazonaws.com', '43.200.89.245', 'localhost']
 
 # Application definition
 
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'myapp',
+    'drf_yasg',
     'rest_framework'
 
 ]
