@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from django.views import View
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -8,6 +9,7 @@ from .serializers import UserSerializer
 from .serializers import ActivitySerializer
 from .models import Users
 from .models import Activity
+from _datetime import datetime
 
 
 class UserListViewSet(viewsets.ModelViewSet):
@@ -62,3 +64,13 @@ def activity_detail(request, user_id):
     elif request.method == 'DELETE':
         activity_info.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ActivityMonthStats(View):
+    def get(self, request):
+        user_id = request.GET.get('user_id', None)
+        year = request.GET.get('year', None)
+        month = request.GET.get('month', None)
+        queryset = Activity.objects.filter(user_id_id=user_id, date__year=year, date__month=month).values_list()
+
+        print(queryset)
