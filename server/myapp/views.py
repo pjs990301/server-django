@@ -4,6 +4,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from rest_framework.views import APIView
 
 from .serializers import UserSerializer
 from .serializers import ActivitySerializer
@@ -66,11 +67,34 @@ def activity_detail(request, user_id):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ActivityMonthStats(View):
+class ActivityMonthStats(APIView):
+
     def get(self, request):
+        fall_count = 0
+        activity_count = 0
+        speaker_count = 0
+        warning_count = 0
+
+        # RESTAPI Query GET
         user_id = request.GET.get('user_id', None)
         year = request.GET.get('year', None)
         month = request.GET.get('month', None)
-        queryset = Activity.objects.filter(user_id_id=user_id, date__year=year, date__month=month).values_list()
 
-        print(queryset)
+        # DB 질의
+        queryset = Activity.objects.filter(user_id_id=user_id, date__year=year, date__month=month).values()
+
+        # 해당 월 활동 통계 작성
+        for count in queryset:
+            fall_count += count['fall_count']
+            activity_count += count['activity_count']
+            speaker_count += count['speaker_count']
+            warning_count += count['warning_count']
+
+        activity_stats = {
+                             'fall_count': fall_count,
+                             'activity_count': activity_count,
+                             'speaker_count': speaker_count,
+                             'warning_count': warning_count,
+        }
+
+        return Response(activity_stats)
