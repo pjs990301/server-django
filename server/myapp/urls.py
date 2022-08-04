@@ -1,5 +1,5 @@
 from rest_framework import routers
-from django.urls import path, include, re_path
+from django.urls import path, include
 
 from .views import UserListViewSet
 from .views import ActivityListViewSet
@@ -17,7 +17,7 @@ urlpatterns = [
 
     path('activity/', ActivityListViewSet.as_view({'get': 'list', 'post': 'create'})),
     path('activity/stats/', ActivityMonthStats.as_view(), name='activity_stats_detail'),
-    path('activity/<str:user_id>/', activity_user_detail, name='activity_detail'),
+    path('activity/<str:user_id>/', activity_user_detail, name='activity_detail '),
     path('activity/<str:user_id>/<int:year>/<int:month>/<int:day>/', activity_user_change, name='activity_detail'),
 
     path('', include('rest_framework.urls', namespace='rest_framework_category')),
