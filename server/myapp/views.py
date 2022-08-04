@@ -57,7 +57,6 @@ def activity_user_detail(request, user_id):
 
 @api_view(['PUT', 'DELETE'])
 def activity_user_change(request, user_id, year, month, day):
-
     if request.method == 'PUT':
         activity_info = Activity.objects.get(user_id_id=user_id, date__year=year, date__month=month,
                                              date__day=day)
