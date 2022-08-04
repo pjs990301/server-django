@@ -45,17 +45,24 @@ def user_detail(request, user_id):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def activity_detail(request, user_id):
-    activity_info = get_object_or_404(Activity, user_id=user_id)
-    if not activity_info:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
+@api_view(['GET'])
+def activity_user_detail(request, user_id):
     if request.method == 'GET':
-        serializer = ActivitySerializer(activity_info)
-        return Response(serializer.data)
+        activity_info = Activity.objects.filter(user_id=user_id).order_by('date')
+        if not activity_info:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = ActivitySerializer(activity_info, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    elif request.method == 'PUT':
+
+@api_view(['PUT', 'DELETE'])
+def activity_user_change(request, user_id, year, month, day):
+
+    if request.method == 'PUT':
+        activity_info = Activity.objects.get(user_id_id=user_id, date__year=year, date__month=month,
+                                             date__day=day)
+        if not activity_info:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = ActivitySerializer(activity_info, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -63,12 +70,15 @@ def activity_detail(request, user_id):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':
+        activity_info = Activity.objects.get(user_id_id=user_id, date__year=year, date__month=month,
+                                             date__day=day)
+        if not activity_info:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         activity_info.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ActivityMonthStats(APIView):
-
     def get(self, request):
         fall_count = 0
         activity_count = 0
@@ -82,6 +92,9 @@ class ActivityMonthStats(APIView):
 
         # DB 질의
         queryset = Activity.objects.filter(user_id_id=user_id, date__year=year, date__month=month).values()
+        # 질의를 찾지 못한 경우 404 NOT_FOUND return
+        if not queryset:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
         # 해당 월 활동 통계 작성
         for count in queryset:
@@ -90,11 +103,12 @@ class ActivityMonthStats(APIView):
             speaker_count += count['speaker_count']
             warning_count += count['warning_count']
 
+        # dir 작성 (Json 전송)
         activity_stats = {
-                             'fall_count': fall_count,
-                             'activity_count': activity_count,
-                             'speaker_count': speaker_count,
-                             'warning_count': warning_count,
+            'fall_count': fall_count,
+            'activity_count': activity_count,
+            'speaker_count': speaker_count,
+            'warning_count': warning_count,
         }
 
-        return Response(activity_stats)
+        return Response(activity_stats, status=status.HTTP_200_OK)
