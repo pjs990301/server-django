@@ -77,6 +77,31 @@ def activity_user_change(request, user_id, year, month, day):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+@api_view(['POST'])
+def activity_day_check(request, user_id, year, month, day):
+    if request.method == 'POST':
+        try:
+            activity_info = Activity.objects.get(user_id_id=user_id, date__year=year, date__month=month,
+                                                 date__day=day)
+            return Response(status=status.HTTP_200_OK)
+
+        except Activity.DoesNotExist:
+            activity_data = {
+                'user_id': user_id,
+                'date': datetime.now().strftime('%Y-%m-%d'),
+                'fall_count': 0,
+                'activity_count': 0,
+                'speaker_count': 0,
+                'warning_count': 0,
+            }
+            serializer = ActivitySerializer(data=activity_data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class ActivityMonthStats(APIView):
     def get(self, request):
         fall_count = 0
