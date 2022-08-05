@@ -17,8 +17,8 @@ urlpatterns = [
     path('user/<str:user_id>/', user_detail, name='user_detail'),
 
     path('activity/', ActivityListViewSet.as_view({'get': 'list', 'post': 'create'})),
-    path('activity/stats/<str:user_id>/<int:year>/<int:month>/', activity_month_stats, name='activity_stats_detail'),
-    path('activity/day-check/<str:user_id>/<int:year>/<int:month>/<int:day>/', activity_day_check, name='activity_day_check'),
+    path('activity/<str:user_id>/stats/<int:year>/<int:month>/', activity_month_stats, name='activity_stats_detail'),
+    path('activity/<str:user_id>/day-check/<int:year>/<int:month>/<int:day>/', activity_day_check, name='activity_day_check'),
     path('activity/<str:user_id>/', activity_user_detail, name='activity_detail '),
     path('activity/<str:user_id>/<int:year>/<int:month>/<int:day>/', activity_user_change, name='activity_user_change'),
 
