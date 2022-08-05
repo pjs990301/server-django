@@ -83,6 +83,7 @@ def activity_day_check(request, user_id, year, month, day):
         try:
             activity_info = Activity.objects.get(user_id_id=user_id, date__year=year, date__month=month,
                                                  date__day=day)
+
             return Response(status=status.HTTP_200_OK)
 
         except Activity.DoesNotExist:
@@ -102,19 +103,14 @@ def activity_day_check(request, user_id, year, month, day):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ActivityMonthStats(APIView):
-    def get(self, request):
-        fall_count = 0
-        activity_count = 0
-        speaker_count = 0
-        warning_count = 0
+@api_view(['GET'])
+def activity_month_stats(request, user_id, year, month):
+    fall_count = 0
+    activity_count = 0
+    speaker_count = 0
+    warning_count = 0
 
-        # RESTAPI Query GET
-        user_id = request.GET.get('user_id', None)
-        year = request.GET.get('year', None)
-        month = request.GET.get('month', None)
-
-        # DB 질의
+    if request.method == 'GET':
         queryset = Activity.objects.filter(user_id_id=user_id, date__year=year, date__month=month).values()
         # 질의를 찾지 못한 경우 404 NOT_FOUND return
         if not queryset:
