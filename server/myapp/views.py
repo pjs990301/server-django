@@ -83,10 +83,9 @@ def activity_day_check(request, user_id, year, month, day):
         try:
             activity_info = Activity.objects.get(user_id_id=user_id, date__year=year, date__month=month,
                                                  date__day=day)
-
             return Response(status=status.HTTP_200_OK)
 
-        except Activity.DoesNotExist:
+        except activity_info.DoesNotExist:
             activity_data = {
                 'user_id': user_id,
                 'date': datetime.now().strftime('%Y-%m-%d'),
