@@ -10,8 +10,6 @@ from .views import activity_user_change
 from .views import activity_month_stats
 from .views import activity_day_check
 
-from .views import ActivityMonthStats
-
 app_name = 'myapp'
 
 urlpatterns = [
