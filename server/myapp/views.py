@@ -139,9 +139,9 @@ def activity_month_stats(request, user_id, year, month):
 
 
 @api_view(['POST'])
-def pi_register_serial(request, user_id, serial_number, mac, usage_type):
+def pi_register_serial(request, user_id, serial_number, mac_address, usage_type):
     if request.method == 'POST':
-        pi_info = RaspberryPi.objects.get(mac_address=mac, serial_number=serial_number)
+        pi_info = RaspberryPi.objects.get(mac_address=mac_address, serial_number=serial_number)
         if not pi_info:
             return Response(status=status.HTTP_404_NOT_FOUND)
         else:
