@@ -138,27 +138,31 @@ def activity_month_stats(request, user_id, year, month):
         return Response(activity_stats, status=status.HTTP_200_OK)
 
 
-@api_view(['POST'])
-def pi_register_user(request, user_id, serial_number, mac_address, usage_type):
-    if request.method == 'POST':
-        pi_info = RaspberryPi.objects.get(mac_address=mac_address, serial_number=serial_number)
+@api_view(['PUT'])
+def pi_register_user(request, user_id, mac_address):
+    if request.method == 'PUT':
+
+        # 같은 mac address 가지고 user, raspberrypi table 질의 => mac 주소가 같은 컬럼 뽑음
+        # mac address 통해서 질의
+        pi_info = RaspberryPi.objects.get(mac_address=mac_address)
         if not pi_info:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        user_info = Users.objects.get(user_id=user_id)
+        # mac address 통해서 질의
+        user_info = Users.objects.get(user_id=user_id, mac_address=mac_address)
         if not user_info:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        # User 정보 수정
+        # User 정보에 PI 정보를 추가해 PUT
         serializer = UserSerializer(user_info, data={
             "user_id": user_info.user_id,
             "serial_number": {
-                "serial_number": serial_number,
-                "type": usage_type
+                "serial_number": pi_info.serial_number,
+                "type": pi_info.usage_type
             },
             "mac_address": mac_address
         })
-        # User 정보 다시 넣기
+        # User 정보 저장
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -175,6 +179,7 @@ def pi_change_user(request, user_id, serial_number, mac_address, usage_type):
         user_info = Users.objects.get(user_id=user_id, serial_number__serial_number=serial_number)
         if not user_info:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
         # User 정보 수정
         if pi_info.serial_number == user_info.serial_number['serial_number']:
             serializer = UserSerializer(user_info, data={

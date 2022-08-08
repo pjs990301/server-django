@@ -15,7 +15,9 @@ from .views import pi_change_user
 app_name = 'myapp'
 
 urlpatterns = [
+    # 유저 생성 및 조회
     path('user/', UserListViewSet.as_view({'get': 'list', 'post': 'create'})),
+    # 유저 세부 사항 조회 및 수정
     path('user/<str:user_id>/', user_detail, name='user_detail'),
 
     path('activity/', ActivityListViewSet.as_view({'get': 'list', 'post': 'create'})),
@@ -25,11 +27,14 @@ urlpatterns = [
     path('activity/<str:user_id>/', activity_user_detail, name='activity_detail '),
     path('activity/<str:user_id>/<int:year>/<int:month>/<int:day>/', activity_user_change, name='activity_user_change'),
 
+    # PI 정보 등록
     path('pi/', RaspberryPiListViewSet.as_view({'get': 'list', 'post': 'create'})),
-    path('pi/<str:user_id>/<str:serial_number>/<str:mac_address>/<int:usage_type>/', pi_register_user,
-         name="pi_register_user"),
-    path('pi/<str:user_id>/change/<str:serial_number>/<str:mac_address>/<int:usage_type>/', pi_change_user,
-         name="pi_change_user"),
+
+    # PI와 앱 동기화
+    path('pi/<str:user_id>/<str:mac_address>/', pi_register_user, name="pi_register_user"),
+
+    # path('pi/<str:user_id>/change/<str:serial_number>/<str:mac_address>/<int:usage_type>/', pi_change_user,
+    #     name="pi_change_user"),
 
     path('', include('rest_framework.urls', namespace='rest_framework_category')),
 ]
