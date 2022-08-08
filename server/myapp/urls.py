@@ -9,7 +9,8 @@ from .views import activity_user_detail
 from .views import activity_user_change
 from .views import activity_month_stats
 from .views import activity_day_check
-from .views import pi_register_serial
+from .views import pi_register_user
+from .views import pi_change_user
 
 app_name = 'myapp'
 
@@ -25,9 +26,10 @@ urlpatterns = [
     path('activity/<str:user_id>/<int:year>/<int:month>/<int:day>/', activity_user_change, name='activity_user_change'),
 
     path('pi/', RaspberryPiListViewSet.as_view({'get': 'list', 'post': 'create'})),
-    path('pi/<str:user_id>/<str:serial_number>/<str:mac_address>/<int:usage_type>/', pi_register_serial,
-         name="pi_register_serial"),
+    path('pi/<str:user_id>/<str:serial_number>/<str:mac_address>/<int:usage_type>/', pi_register_user,
+         name="pi_register_user"),
+    path('pi/<str:user_id>/change/<str:serial_number>/<str:mac_address>/<int:usage_type>/', pi_change_user,
+         name="pi_change_user"),
+
     path('', include('rest_framework.urls', namespace='rest_framework_category')),
 ]
-
-# urlpatterns = format_suffix_patterns (urlpatterns)

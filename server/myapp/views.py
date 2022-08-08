@@ -139,15 +139,44 @@ def activity_month_stats(request, user_id, year, month):
 
 
 @api_view(['POST'])
-def pi_register_serial(request, user_id, serial_number, mac_address, usage_type):
+def pi_register_user(request, user_id, serial_number, mac_address, usage_type):
     if request.method == 'POST':
         pi_info = RaspberryPi.objects.get(mac_address=mac_address, serial_number=serial_number)
         if not pi_info:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        else:
-            user_info = Users.objects.get(user_id=user_id)
 
-            # PUT 정보 수정
+        user_info = Users.objects.get(user_id=user_id)
+        if not user_info:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        # User 정보 수정
+        serializer = UserSerializer(user_info, data={
+            "user_id": user_info.user_id,
+            "serial_number": {
+                "serial_number": serial_number,
+                "type": usage_type
+            },
+            "mac_address": mac_address
+        })
+        # User 정보 다시 넣기
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['PUT'])
+def pi_change_user(request, user_id, serial_number, mac_address, usage_type):
+    if request.method == 'PUT':
+        pi_info = RaspberryPi.objects.get(serial_number=serial_number)
+        if not pi_info:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        user_info = Users.objects.get(user_id=user_id, serial_number__serial_number=serial_number)
+        if not user_info:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        # User 정보 수정
+        if pi_info.serial_number == user_info.serial_number['serial_number']:
             serializer = UserSerializer(user_info, data={
                 "user_id": user_info.user_id,
                 "serial_number": {
@@ -156,8 +185,10 @@ def pi_register_serial(request, user_id, serial_number, mac_address, usage_type)
                 },
                 "mac_address": mac_address
             })
-
+            # User 정보 다시 넣기
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
