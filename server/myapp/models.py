@@ -9,7 +9,6 @@ def serial_default():
 
 class Users(models.Model):
     user_id = models.CharField(max_length=200, primary_key=True, unique=True)
-    user_name = models.CharField(max_length=100)
     serial_number = models.JSONField(null=True, blank=True, default=serial_default)
     mac_address = models.CharField(max_length=200, blank=True, null=True)
 
