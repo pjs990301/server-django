@@ -25,7 +25,7 @@ urlpatterns = [
     path('activity/<str:user_id>/<int:year>/<int:month>/<int:day>/', activity_user_change, name='activity_user_change'),
 
     path('pi/', RaspberryPiListViewSet.as_view({'get': 'list', 'post': 'create'})),
-    path('pi/<str:user_id>/<str:serial_number>/<str:mac_address>/<int:usage_type>', pi_register_serial,
+    path('pi/<str:user_id>/<str:serial_number>/<str:mac_address>/<int:usage_type>/', pi_register_serial,
          name="pi_register_serial"),
     path('', include('rest_framework.urls', namespace='rest_framework_category')),
 ]

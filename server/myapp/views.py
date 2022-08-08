@@ -150,12 +150,11 @@ def pi_register_serial(request, user_id, serial_number, mac_address, usage_type)
             # PUT 정보 수정
             serializer = UserSerializer(user_info, data={
                 "user_id": user_info.user_id,
-                "user_name": user_info.user_name,
                 "serial_number": {
                     "serial_number": serial_number,
                     "type": usage_type
                 },
-                "mac_address": mac
+                "mac_address": mac_address
             })
 
             if serializer.is_valid():
