@@ -1,14 +1,11 @@
-from django.http import JsonResponse
-from django.views import View
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-from rest_framework.views import APIView
 
-from .serializers import UserSerializer
+from .serializers import UserSerializer, PiSerializer
 from .serializers import ActivitySerializer
-from .models import Users
+from .models import Users, RaspberryPi
 from .models import Activity
 from _datetime import datetime
 
@@ -21,6 +18,11 @@ class UserListViewSet(viewsets.ModelViewSet):
 class ActivityListViewSet(viewsets.ModelViewSet):
     queryset = Activity.objects.all()
     serializer_class = ActivitySerializer
+
+
+class RaspberryPiListViewSet(viewsets.ModelViewSet):
+    queryset = RaspberryPi.objects.all()
+    serializer_class = PiSerializer
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -125,7 +127,7 @@ def activity_month_stats(request, user_id, year, month):
             speaker_count += count['speaker_count']
             warning_count += count['warning_count']
 
-        # dir 작성 (Json 전송)
+        # dir 작성 (JSON 전송)
         activity_stats = {
             'fall_count': fall_count,
             'activity_count': activity_count,
@@ -134,3 +136,29 @@ def activity_month_stats(request, user_id, year, month):
         }
 
         return Response(activity_stats, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def pi_register_serial(request, user_id, serial_number, mac, usage_type):
+    if request.method == 'POST':
+        pi_info = RaspberryPi.objects.get(mac_address=mac, serial_number=serial_number)
+        if not pi_info:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        else:
+            user_info = Users.objects.get(user_id=user_id)
+
+            # PUT 정보 수정
+            serializer = UserSerializer(user_info, data={
+                "user_id": user_info.user_id,
+                "user_name": user_info.user_name,
+                "serial_number": {
+                    "serial_number": serial_number,
+                    "type": usage_type
+                },
+                "mac_address": mac
+            })
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
