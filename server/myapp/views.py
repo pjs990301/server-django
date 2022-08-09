@@ -152,21 +152,25 @@ def pi_register_user(request, user_id, mac_address):
         user_info = Users.objects.get(user_id=user_id, mac_address=mac_address)
         if not user_info:
             return Response(status=status.HTTP_404_NOT_FOUND)
-
+        print(pi_info.mac_address)
+        print(user_info.mac_address)
         # User 정보에 PI 정보를 추가해 PUT
-        serializer = UserSerializer(user_info, data={
-            "user_id": user_info.user_id,
-            "serial_number": {
-                "serial_number": pi_info.serial_number,
-                "type": pi_info.usage_type
-            },
-            "mac_address": mac_address
-        })
-        # User 정보 저장
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if pi_info.mac_address == user_info.mac_address:
+            serializer = UserSerializer(user_info, data={
+                "user_id": user_info.user_id,
+                "serial_number": {
+                    "serial_number": pi_info.serial_number,
+                    "type": pi_info.type
+                },
+                "mac_address": mac_address
+            })
+            # User 정보 저장
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else :
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['PUT'])
@@ -196,4 +200,4 @@ def pi_change_user(request, user_id, serial_number, mac_address, usage_type):
                 return Response(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_404_NOT_FOUND)
