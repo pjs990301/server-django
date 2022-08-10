@@ -10,6 +10,7 @@ from .views import activity_user_change
 from .views import activity_month_stats
 from .views import activity_day_check
 from .views import pi_register_user
+from .views import pi_connected_check
 from .views import pi_change_user
 
 app_name = 'myapp'
@@ -33,6 +34,7 @@ urlpatterns = [
 
     # PI와 앱 동기화
     path('pi/<str:user_id>/<str:mac_address>/', pi_register_user, name="pi_register_user"),
+    path('pi/<str:user_id>/<str:mac_address>/', pi_connected_check, name="pi_register_user"),
 
     # path('pi/<str:user_id>/change/<str:serial_number>/<str:mac_address>/<int:usage_type>/', pi_change_user,
     #     name="pi_change_user"),

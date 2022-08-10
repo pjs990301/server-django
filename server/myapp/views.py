@@ -144,32 +144,36 @@ def pi_register_user(request, user_id, mac_address):
 
         # 같은 mac address 가지고 user, raspberrypi table 질의 => mac 주소가 같은 컬럼 뽑음
         # mac address 통해서 질의
-        pi_info = RaspberryPi.objects.get(mac_address=mac_address)
-        if not pi_info:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+        try:
+            pi_info = RaspberryPi.objects.get(mac_address=mac_address)
+            if not pi_info:
+                return Response(status=status.HTTP_404_NOT_FOUND)
 
-        # mac address 통해서 질의
-        user_info = Users.objects.get(user_id=user_id, mac_address=mac_address)
-        if not user_info:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        print(pi_info.mac_address)
-        print(user_info.mac_address)
-        # User 정보에 PI 정보를 추가해 PUT
-        if pi_info.mac_address == user_info.mac_address:
-            serializer = UserSerializer(user_info, data={
-                "user_id": user_info.user_id,
-                "serial_number": {
-                    "serial_number": pi_info.serial_number,
-                    "type": pi_info.type
-                },
-                "mac_address": mac_address
-            })
-            # User 정보 저장
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        else :
+            # mac address 통해서 질의
+            user_info = Users.objects.get(user_id=user_id, mac_address=mac_address)
+            if not user_info:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+            print(pi_info.mac_address)
+            print(user_info.mac_address)
+            # User 정보에 PI 정보를 추가해 PUT
+            if pi_info.mac_address == user_info.mac_address:
+                serializer = UserSerializer(user_info, data={
+                    "user_id": user_info.user_id,
+                    "serial_number": {
+                        "serial_number": pi_info.serial_number,
+                        "type": pi_info.type
+                    },
+                    "mac_address": mac_address
+                })
+                # User 정보 저장
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+
+        except pi_info.DoesNotExist or user_info.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
 
@@ -201,3 +205,21 @@ def pi_change_user(request, user_id, serial_number, mac_address, usage_type):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['GET'])
+def pi_connected_check(request, user_id, mac_address):
+    if request.method == 'GET':
+        try:
+            pi_info = RaspberryPi.objects.get(mac_address=mac_address)
+            if not pi_info:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+
+            user_info = Users.objects.get(user_id=user_id, mac_address=mac_address)
+            if not user_info:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+
+            return Response(status=status.HTTP_200_OK)
+
+        except pi_info.DoesNotExist or user_info.DoesNotExist:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
