@@ -153,8 +153,7 @@ def pi_register_user(request, user_id, mac_address):
             user_info = Users.objects.get(user_id=user_id, mac_address=mac_address)
             if not user_info:
                 return Response(status=status.HTTP_404_NOT_FOUND)
-            print(pi_info.mac_address)
-            print(user_info.mac_address)
+
             # User 정보에 PI 정보를 추가해 PUT
             if pi_info.mac_address == user_info.mac_address:
                 serializer = UserSerializer(user_info, data={
@@ -173,7 +172,7 @@ def pi_register_user(request, user_id, mac_address):
             else:
                 return Response(status=status.HTTP_404_NOT_FOUND)
 
-        except pi_info.DoesNotExist or user_info.DoesNotExist:
+        except RaspberryPi.DoesNotExist or Users.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
 
@@ -221,5 +220,5 @@ def pi_connected_check(request, user_id, mac_address):
 
             return Response(status=status.HTTP_200_OK)
 
-        except pi_info.DoesNotExist or user_info.DoesNotExist:
-            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except:
+            return Response(status=status.HTTP_404_NOT_FOUND)

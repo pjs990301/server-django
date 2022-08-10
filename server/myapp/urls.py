@@ -34,7 +34,7 @@ urlpatterns = [
 
     # PI와 앱 동기화
     path('pi/<str:user_id>/<str:mac_address>/', pi_register_user, name="pi_register_user"),
-    path('pi/<str:user_id>/<str:mac_address>/', pi_connected_check, name="pi_register_user"),
+    path('pi/<str:user_id>/check/<str:mac_address>/', pi_connected_check, name="pi_connected_check"),
 
     # path('pi/<str:user_id>/change/<str:serial_number>/<str:mac_address>/<int:usage_type>/', pi_change_user,
     #     name="pi_change_user"),
