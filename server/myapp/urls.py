@@ -33,7 +33,7 @@ urlpatterns = [
 
     # PI와 앱 동기화
     path('pi/<str:user_id>/<str:mac_address>/', pi_register_user, name="pi_register_user"),
-    path('pi/check/<str:user_id>/<str:mac_address>/', pi_connected_check, name="pi_connected_check"),
+    path('pi/check/<str:user_id>', pi_connected_check, name="pi_connected_check"),
 
     path('', include('rest_framework.urls', namespace='rest_framework_category')),
 ]
