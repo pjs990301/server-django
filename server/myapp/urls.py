@@ -33,7 +33,14 @@ urlpatterns = [
 
     # PI와 앱 동기화
     path('pi/<str:user_id>/<str:mac_address>/', pi_register_user, name="pi_register_user"),
+<<<<<<< Updated upstream
     path('pi/check/<str:user_id>', pi_connected_check, name="pi_connected_check"),
+=======
+    path('pi/check/<str:user_id>/<str:mac_address>/', pi_connected_check, name="pi_connected_check"),
+
+    # path('pi/<str:user_id>/change/<str:serial_number>/<str:mac_address>/<int:usage_type>/', pi_change_user,
+    #     name="pi_change_user"),
+>>>>>>> Stashed changes
 
     path('', include('rest_framework.urls', namespace='rest_framework_category')),
 ]
