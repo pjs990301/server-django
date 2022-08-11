@@ -145,14 +145,17 @@ def pi_register_user(request, user_id, mac_address):
         # 같은 mac address 가지고 user, raspberrypi table 질의 => mac 주소가 같은 컬럼 뽑음
         # mac address 통해서 질의
         try:
-            pi_info = RaspberryPi.objects.get(mac_address=mac_address)
+            pi_info = RaspberryPi.objects.filter(mac_address=mac_address)
             user_info = Users.objects.get(user_id=user_id, mac_address=mac_address)
-
-            if not pi_info or user_info:
+            print(user_info.mac_address)
+            print(pi_info[0].mac_address)
+            if not pi_info:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+            if not user_info:
                 return Response(status=status.HTTP_404_NOT_FOUND)
 
             # User 정보에 PI 정보를 추가해 PUT
-            if pi_info.mac_address == user_info.mac_address:
+            if pi_info[0].mac_address == user_info.mac_address:
                 serializer = UserSerializer(user_info, data={
                     "user_id": user_info.user_id,
                     "serial_number": {
