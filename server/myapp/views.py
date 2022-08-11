@@ -177,19 +177,23 @@ def pi_register_user(request, user_id, mac_address):
 def pi_connected_check(request, user_id):
     if request.method == 'GET':
         try:
-            pi_info = RaspberryPi.objects.get()
+            pi_info = RaspberryPi.objects.all()
             user_info = Users.objects.get(user_id=user_id)
 
-            if not pi_info or user_info:
+            if not pi_info:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+            if not user_info:
                 return Response(status=status.HTTP_404_NOT_FOUND)
 
-            if pi_info.serial_number == user_info.serial_number['serial_number']:
+            if pi_info.get(serial_number=user_info.serial_number['serial_number']):
                 return Response(status=status.HTTP_200_OK)
-            else:
-                if pi_info.mac_address == user_info.mac_address:
-                    return Response(status=status.HTTP_201_CREATED)
-                else:
-                    return Response(status=status.HTTP_404_NOT_FOUND)
 
         except RaspberryPi.DoesNotExist or Users.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+
+            try:
+                pi_info = RaspberryPi.objects.get(mac_address=user_info.mac_address).mac_address
+                if pi_info == user_info.mac_address:
+                    return Response(status=status.HTTP_201_CREATED)
+
+            except RaspberryPi.DoesNotExist or Users.DoesNotExist:
+                return Response(status=status.HTTP_404_NOT_FOUND)
