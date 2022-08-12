@@ -159,8 +159,8 @@ def pi_register_user(request, user_id, mac_address):
                 serializer = UserSerializer(user_info, data={
                     "user_id": user_info.user_id,
                     "serial_number": {
-                        "serial_number": pi_info.serial_number,
-                        "type": pi_info.type
+                        "serial_number": pi_info[0].serial_number,
+                        "type": pi_info[0].type
                     },
                     "mac_address": mac_address
                 })
