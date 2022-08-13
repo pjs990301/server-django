@@ -147,8 +147,6 @@ def pi_register_user(request, user_id, mac_address):
         try:
             pi_info = RaspberryPi.objects.filter(mac_address=mac_address)
             user_info = Users.objects.get(user_id=user_id, mac_address=mac_address)
-            print(user_info.mac_address)
-            print(pi_info[0].mac_address)
             if not pi_info:
                 return Response(status=status.HTTP_404_NOT_FOUND)
             if not user_info:
