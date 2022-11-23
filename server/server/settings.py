@@ -29,7 +29,7 @@ SECRET_KEY = '@%1iaax+=d*&lhk8=fg=0!#*&&u1!el!kfdbgwd+7a53y2*_4b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'blue-sun.kro.kr']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'blue-sun.kro.kr', '3.37.161.170']
 # ALLOWED_HOSTS = ['*']
 
 # Application definition
