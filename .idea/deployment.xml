@@ -5,7 +5,7 @@
       <paths name="aws">
         <serverdata>
           <mappings>
-            <mapping deploy="/home/ubuntu/server-django-jisung" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/home/ubuntu/server-django" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>

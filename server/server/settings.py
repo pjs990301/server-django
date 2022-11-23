@@ -29,7 +29,7 @@ SECRET_KEY = '@%1iaax+=d*&lhk8=fg=0!#*&&u1!el!kfdbgwd+7a53y2*_4b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'blue-sun.kro.kr', '3.37.161.170']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '3.37.161.170']
 # ALLOWED_HOSTS = ['*']
 
 # Application definition
@@ -86,7 +86,7 @@ DATABASES = {
         'NAME': 'mowa',
         'USER': 'admin',
         'PASSWORD': 'mowamowa',
-        'HOST': 'mowa.cvlqz9zwqmjx.ap-northeast-2.rds.amazonaws.com',
+        'HOST': 'mowa.ciwziqcrl4x3.ap-northeast-2.rds.amazonaws.com',
         'PORT': '3306',
         'OPTIONS': {
             'init_command': 'SET sql_mode="STRICT_TRANS_TABLES"'
