@@ -1,6 +1,8 @@
 # Created by https://www.toptal.com/developers/gitignore/api/linux,pycharm,python,django
 # Edit at https://www.toptal.com/developers/gitignore?templates=linux,pycharm,python,django
 
+/data
+nohup.out
 ### Django ###
 *.log
 *.pot
