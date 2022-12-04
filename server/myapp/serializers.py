@@ -12,7 +12,7 @@ class ActivitySerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
-        fields = ('user_id', 'serial_number', 'mac_address')
+        fields = ('user_id', 'serial_number', 'mac_address', 'mode', 'status')
 
 
 class PiSerializer(serializers.ModelSerializer):

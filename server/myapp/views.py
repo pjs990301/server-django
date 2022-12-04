@@ -9,10 +9,43 @@ from .models import Users, RaspberryPi
 from .models import Activity
 from _datetime import datetime
 
+from simplecrypt import encrypt, decrypt
+
 
 class UserListViewSet(viewsets.ModelViewSet):
     queryset = Users.objects.all()
     serializer_class = UserSerializer
+
+    def create(self, request, *args, **kwargs):
+        user_info = {
+            "user_id": request.data.get("user_id"),
+            "serial_number": request.data.get("serial_number"),
+            "mac_address": request.data.get("mac_address"),
+            "mode": request.data.get("mode"),
+            "status": request.data.get("status")
+        }
+        serializer = self.get_serializer(data=user_info)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_create(self, serializer):
+        serializer.validated_data['user_id'] = encrypt("MoWA", serializer.validated_data['user_id'])
+        serializer.validated_data['mac_address'] = encrypt("MoWA", serializer.validated_data['mac_address'])
+        serializer.validated_data['mode'] = encrypt("MoWA", serializer.validated_data['mode'])
+        serializer.validated_data['status'] = encrypt("MoWA", serializer.validated_data['status'])
+
+        serializer.save()
+
+    def list(self, request, *args, **kwargs):
+        queryset = Users.objects.all()
+        serializer = UserSerializer(queryset, many=True)
+        for i in range(len(queryset)):
+            # print(type(queryset[i].user_id))
+            # print(queryset[i].user_id[2:len(queryset[i].user_id) - 1])
+            print((bytes(queryset[i].user_id[2:len(queryset[i].user_id) - 1], encoding='utf-8')))
+        return Response(serializer.data)
 
 
 class ActivityListViewSet(viewsets.ModelViewSet):
@@ -23,6 +56,28 @@ class ActivityListViewSet(viewsets.ModelViewSet):
 class RaspberryPiListViewSet(viewsets.ModelViewSet):
     queryset = RaspberryPi.objects.all()
     serializer_class = PiSerializer
+
+
+@api_view(['PUT', 'DELETE'])
+def activity_user_change(request, user_id, year, month, day):
+    if request.method == 'PUT':
+        activity_info = Activity.objects.get(user_id_id=user_id, date__year=year, date__month=month,
+                                             date__day=day)
+        if not activity_info:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = ActivitySerializer(activity_info, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        activity_info = Activity.objects.get(user_id_id=user_id, date__year=year, date__month=month,
+                                             date__day=day)
+        if not activity_info:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        activity_info.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -55,28 +110,6 @@ def activity_user_detail(request, user_id):
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = ActivitySerializer(activity_info, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-@api_view(['PUT', 'DELETE'])
-def activity_user_change(request, user_id, year, month, day):
-    if request.method == 'PUT':
-        activity_info = Activity.objects.get(user_id_id=user_id, date__year=year, date__month=month,
-                                             date__day=day)
-        if not activity_info:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = ActivitySerializer(activity_info, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    elif request.method == 'DELETE':
-        activity_info = Activity.objects.get(user_id_id=user_id, date__year=year, date__month=month,
-                                             date__day=day)
-        if not activity_info:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        activity_info.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['POST'])
@@ -160,7 +193,9 @@ def pi_register_user(request, user_id, mac_address):
                         "serial_number": pi_info[0].serial_number,
                         "type": pi_info[0].type
                     },
-                    "mac_address": mac_address
+                    "mac_address": mac_address,
+                    "mode": user_info.mode,
+                    "status": user_info.status
                 })
                 # User 정보 저장
                 if serializer.is_valid():

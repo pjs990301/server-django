@@ -1,6 +1,7 @@
 import glob
 import os
 
+import joblib
 import tensorflow as tf
 import numpy as np
 import pandas as pd
@@ -14,6 +15,7 @@ from pickle import load
 
 import convert_csv
 import warnings
+
 warnings.filterwarnings('ignore')
 
 '''
@@ -26,6 +28,42 @@ MoWA deep에서 학습시킨 Tensorflow model, scaler, encoding 등에 대해서
 np.set_printoptions(precision=6, suppress=True)
 pd.set_option('display.float_format', '{:.4f}'.format)
 np.seterr(divide='ignore')
+
+
+class Standard_Scaler(TransformerMixin):
+    def __init__(self, **kwargs):
+        self._scaler = StandardScaler(copy=True, **kwargs)
+        self._orig_shape = None
+
+    def fit(self, X, **kwargs):
+        X = np.array(X)
+        # Save the original shape to reshape the flattened X later
+        # back to its original shape
+        if len(X.shape) > 1:
+            self._orig_shape = X.shape[1:]
+        X = self._flatten(X)
+        self._scaler.fit(X, **kwargs)
+        return self
+
+    def transform(self, X, **kwargs):
+        X = np.array(X)
+        X = self._flatten(X)
+        X = self._scaler.transform(X, **kwargs)
+        X = self._reshape(X)
+        return X
+
+    def _flatten(self, X):
+        # Reshape X to <= 2 dimensions
+        if len(X.shape) > 2:
+            n_dims = np.prod(self._orig_shape)
+            X = X.reshape(-1, n_dims)
+        return X
+
+    def _reshape(self, X):
+        # Reshape X back to it's original shape
+        if len(X.shape) >= 2:
+            X = X.reshape(-1, *self._orig_shape)
+        return X
 
 
 def reading_file(activity_csv):
@@ -49,19 +87,22 @@ def print_value(prediction):
         return "Walking"
 
 
-print("----------------")
+print("---------------------------")
 print("[Load Scaler and Encoding]")
-print("----------------\n")
+print("---------------------------\n")
 
-with open('model/sc_model.pkl', 'rb') as f:
-    sc = load(f)
+sc = joblib.load('./model/scaling_model/model_pickle3.pkl')
+en = joblib.load('./model/encoding_model/model_pickle3.pkl')
 
-with open('model/en_model.pkl', 'rb') as f:
-    en = load(f)
+# with open('./model/scaling_model/model_pickle2.pkl', 'rb') as f:
+#     sc = load(f)
+#
+# with open('./model/encoding_model/model_pickle2.pkl', 'rb') as f:
+#     en = load(f)
 
-print("-------------------------")
+print("-----------------------------------")
 print("[Load Scaler and Encoding complete]")
-print("-------------------------\n")
+print("-----------------------------------\n")
 
 print("------------")
 print("[Load model]")
@@ -69,7 +110,7 @@ print("------------\n")
 
 model = tf.keras.models.load_model(
     # "C:\\Users\\HOME\\Desktop\\Experiment-3\\Experiment-3\\Data\\model\\model_2022_09_21_18_14_23_97.09")
-    "../model_2022_09_21_18_14_23_97.09")
+    "./model/model_2022_11_30_23_42_33_97.67")
 
 print("---------------------")
 print("[Load model complete]")
@@ -78,7 +119,7 @@ print("---------------------\n")
 
 class Target:
     # watchDir = "D:\\MoWA\\data\\input\\pcap"
-    watchDir = "ftp://blue-sun.kro.kr:9002/data/input/pcap"
+    watchDir = "../data/input/pcap"
 
     # watchDir에 감시하려는 디렉토리를 명시한다.
     def __init__(self):
@@ -116,8 +157,8 @@ class Handler(FileSystemEventHandler):
         # convert_csv.generate_csv(  # Fname + ".pcap",
         #     "D:\\MoWA\\data\\input\\pcap\\" + Fname + ".pcap", "D:\\MoWA\\data\\input\\csv\\" + Fname + ".csv",
         #     'amplitude')
-        convert_csv.generate_csv("ftp://blue-sun.kro.kr:9002/data/input/pcap/" + Fname + ".pcap",
-                                 "ftp://blue-sun.kro.kr:9002/data/input/csv/" + Fname + ".csv",
+        convert_csv.generate_csv("../data/input/pcap/" + Fname + ".pcap",
+                                 "../data/input/csv/" + Fname + ".csv",
                                  'amplitude')
 
         print("----------------------")
@@ -128,7 +169,8 @@ class Handler(FileSystemEventHandler):
         print("[Load %s.csv]" % Fname)
         print("---------------------------------------\n")
 
-        path = "D:\\MoWA\\data\\input\\csv"
+        # path = "D:\\MoWA\\data\\input\\csv"
+        path = "../data/input/csv"
         os.chdir(path)
         list_file = glob.glob("*.csv")
         input_csv = [i for i in list_file]
@@ -148,5 +190,6 @@ class Handler(FileSystemEventHandler):
 
 
 if __name__ == '__main__':  # 본 파일에서 실행될 때만 실행되도록 함
+
     w = Target()
     w.run()
