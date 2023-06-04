@@ -1,3 +1,6 @@
+import pdb
+import urllib
+
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -8,8 +11,6 @@ from .serializers import ActivitySerializer
 from .models import Users, RaspberryPi
 from .models import Activity
 from _datetime import datetime
-
-from simplecrypt import encrypt, decrypt
 
 
 class UserListViewSet(viewsets.ModelViewSet):
@@ -26,17 +27,8 @@ class UserListViewSet(viewsets.ModelViewSet):
         }
         serializer = self.get_serializer(data=user_info)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-    def perform_create(self, serializer):
-        serializer.validated_data['user_id'] = encrypt("MoWA", serializer.validated_data['user_id'])
-        serializer.validated_data['mac_address'] = encrypt("MoWA", serializer.validated_data['mac_address'])
-        serializer.validated_data['mode'] = encrypt("MoWA", serializer.validated_data['mode'])
-        serializer.validated_data['status'] = encrypt("MoWA", serializer.validated_data['status'])
-
-        serializer.save()
 
     def list(self, request, *args, **kwargs):
         queryset = Users.objects.all()
@@ -233,3 +225,19 @@ def pi_connected_check(request, user_id):
 
             except RaspberryPi.DoesNotExist or Users.DoesNotExist:
                 return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['PUT'])
+def activity_fall_happen(request, user_id, year, month, day):
+    if request.method == 'PUT':
+        activity_info = Activity.objects.get(user_id_id=user_id, date__year=year, date__month=month,
+                                             date__day=day)
+        if not activity_info:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        activity_info.fall_count += 1
+        serializer = ActivitySerializer(activity_info, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

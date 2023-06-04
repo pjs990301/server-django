@@ -11,6 +11,7 @@ from .views import activity_month_stats
 from .views import activity_day_check
 from .views import pi_register_user
 from .views import pi_connected_check
+from .views import activity_fall_happen
 
 app_name = 'myapp'
 
@@ -27,6 +28,7 @@ urlpatterns = [
          name='activity_day_check'),
     path('activity/<str:user_id>/', activity_user_detail, name='activity_detail '),
     path('activity/<str:user_id>/<int:year>/<int:month>/<int:day>/', activity_user_change, name='activity_user_change'),
+    path('activity/fall/<str:user_id>/<int:year>/<int:month>/<int:day>/', activity_fall_happen, name='fall detect'),
 
     # PI 정보 등록
     path('pi/', RaspberryPiListViewSet.as_view({'get': 'list', 'post': 'create', 'put': 'update'})),
