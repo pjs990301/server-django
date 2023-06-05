@@ -6,15 +6,18 @@ serial = subprocess.check_output('cat /proc/cpuinfo | grep Serial | awk \'{print
 
 iwconfig = subprocess.check_output('iwconfig wlan0', shell=True)
 bssid = ""
+
 # Python3 Version
 # index = iwconfig.decode.find("Access Point: ")
 
 # Python2 Version
+
 index = iwconfig.find("Access Point: ")
 for i in range(index + 14, index + 31):
     bssid += iwconfig[i]
 
-url = "http://blue-sun.kro.kr:9000/pi/"
+# url = "http://blue-sun.kro.kr:9000/pi/"
+url = "http://3.37.161.170:8000/pi"
 data = {
     "serial_number": serial,
     "mac_address": bssid,

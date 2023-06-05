@@ -12,6 +12,8 @@ from .views import activity_day_check
 from .views import pi_register_user
 from .views import pi_connected_check
 from .views import activity_fall_happen
+from .views import upload_file
+
 
 app_name = 'myapp'
 
@@ -36,6 +38,7 @@ urlpatterns = [
     # PI와 앱 동기화
     path('pi/<str:user_id>/<str:mac_address>/', pi_register_user, name="pi_register_user"),
     path('pi/check/<str:user_id>', pi_connected_check, name="pi_connected_check"),
+    path('pi/CSI', upload_file, name='upload_CSI'),
 
     path('', include('rest_framework.urls', namespace='rest_framework_category')),
 ]

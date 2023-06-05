@@ -1,10 +1,13 @@
 import pdb
 import urllib
+import os
 
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from django.conf import settings
+from django.http import JsonResponse
 
 from .serializers import UserSerializer, PiSerializer
 from .serializers import ActivitySerializer
@@ -241,3 +244,28 @@ def activity_fall_happen(request, user_id, year, month, day):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def upload_file(request):
+    if request.method == 'POST' and request.FILES.get('file'):
+        file = request.FILES['file']
+        file_path = os.path.join(settings.MEDIA_ROOT, file.name)
+        with open(file_path, 'wb') as destination:
+            for chunk in file.chunks():
+                destination.write(chunk)
+                file_count = count_files_with_prefix('input_')
+        return JsonResponse({'success': True, 'file_count': file_count})
+    return JsonResponse({'success': False})
+
+
+def count_files_with_prefix(prefix):
+    media_root = settings.MEDIA_ROOT
+    file_count = 0
+
+    files = os.listdir(media_root)
+    for file_name in files:
+        if file_name.startswith(prefix):
+            file_count += 1
+
+    return file_count
