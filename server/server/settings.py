@@ -29,7 +29,7 @@ SECRET_KEY = '@%1iaax+=d*&lhk8=fg=0!#*&&u1!el!kfdbgwd+7a53y2*_4b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '3.37.161.170']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'inclab3.gachon.ac.kr']
 # ALLOWED_HOSTS = ['*']
 
 # Application definition
@@ -43,8 +43,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'myapp',
     'drf_yasg',
-    'rest_framework'
-
+    'rest_framework',
+    'wifi',
+    'dataloader',
+    'proto', 'ReWiS_model'
 ]
 
 MIDDLEWARE = [
@@ -132,4 +134,4 @@ REST_FRAMEWORK = {
     ),
 }
 
-MEDIA_ROOT = '/home/ubuntu/data/test'
+MEDIA_ROOT = '/home/jisung/Project/MoWA/data/test'

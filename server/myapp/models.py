@@ -4,7 +4,7 @@ from django.db import models
 
 
 def serial_default():
-    return {'serial_number': [], 'type': []}
+    return {'pi_serial_number': "", 'type': ""}
 
 
 class Users(models.Model):

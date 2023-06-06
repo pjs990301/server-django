@@ -20,7 +20,7 @@ warnings.filterwarnings('ignore')
 
 '''
 
-MoWA deep에서 학습시킨 Tensorflow model, scaler, encoding 등에 대해서 Load
+MoWA deep에서 학습시킨 Tensorflow wifi, scaler, encoding 등에 대해서 Load
 새로운 CSI 데이터가 들어올 경우 model을 통해서 현재의 상태를 에측
 
 '''
@@ -91,13 +91,13 @@ print("---------------------------")
 print("[Load Scaler and Encoding]")
 print("---------------------------\n")
 
-sc = joblib.load('./model/scaling_model/model_pickle3.pkl')
-en = joblib.load('./model/encoding_model/model_pickle3.pkl')
+sc = joblib.load('./wifi/scaling_model/model_pickle3.pkl')
+en = joblib.load('./wifi/encoding_model/model_pickle3.pkl')
 
-# with open('./model/scaling_model/model_pickle2.pkl', 'rb') as f:
+# with open('./wifi/scaling_model/model_pickle2.pkl', 'rb') as f:
 #     sc = load(f)
 #
-# with open('./model/encoding_model/model_pickle2.pkl', 'rb') as f:
+# with open('./wifi/encoding_model/model_pickle2.pkl', 'rb') as f:
 #     en = load(f)
 
 print("-----------------------------------")
@@ -105,15 +105,15 @@ print("[Load Scaler and Encoding complete]")
 print("-----------------------------------\n")
 
 print("------------")
-print("[Load model]")
+print("[Load wifi]")
 print("------------\n")
 
 model = tf.keras.models.load_model(
-    # "C:\\Users\\HOME\\Desktop\\Experiment-3\\Experiment-3\\Data\\model\\model_2022_09_21_18_14_23_97.09")
-    "./model/model_2022_11_30_23_42_33_97.67")
+    # "C:\\Users\\HOME\\Desktop\\Experiment-3\\Experiment-3\\Data\\wifi\\model_2022_09_21_18_14_23_97.09")
+    "./wifi/model_2022_11_30_23_42_33_97.67")
 
 print("---------------------")
-print("[Load model complete]")
+print("[Load wifi complete]")
 print("---------------------\n")
 
 

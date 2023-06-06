@@ -1,5 +1,3 @@
-import pdb
-import urllib
 import os
 
 from rest_framework import viewsets, status
@@ -14,6 +12,15 @@ from .serializers import ActivitySerializer
 from .models import Users, RaspberryPi
 from .models import Activity
 from _datetime import datetime
+import requests
+from django.http import HttpRequest
+from django.http import QueryDict
+
+import sys
+import time
+sys.path.append('/home/jisung/Project/MoWA/server-django/wifi/')
+
+from wifi.predict import predict_result
 
 
 class UserListViewSet(viewsets.ModelViewSet):
@@ -233,12 +240,14 @@ def pi_connected_check(request, user_id):
 @api_view(['PUT'])
 def activity_fall_happen(request, user_id, year, month, day):
     if request.method == 'PUT':
+        print("here2")
         activity_info = Activity.objects.get(user_id_id=user_id, date__year=year, date__month=month,
-                                             date__day=day)
+                                                date__day=day)
         if not activity_info:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         activity_info.fall_count += 1
+        print(request.data)
         serializer = ActivitySerializer(activity_info, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -250,17 +259,55 @@ def activity_fall_happen(request, user_id, year, month, day):
 def upload_file(request):
     if request.method == 'POST' and request.FILES.get('file'):
         file = request.FILES['file']
-        file_path = os.path.join(settings.MEDIA_ROOT, file.name)
+        userid = "gachon.mowa@gamil.com"
+        directory_path = os.path.join(settings.MEDIA_ROOT, userid)
+        os.makedirs(directory_path, exist_ok=True)
+        file_path = os.path.join(directory_path, file.name)
+
         with open(file_path, 'wb') as destination:
             for chunk in file.chunks():
                 destination.write(chunk)
-                file_count = count_files_with_prefix('input_')
+            print("finish")
+        file_count = count_files_with_prefix('input_', directory_path)
+        print(file_count)
+
+        if file_count >= 1 :
+            value = predict_result(directory_path)
+            print(value)
+
+            if value == "fall" :
+                user_id = "gachon.mowa@gmail.com"
+                year = "2023"
+                month = "6"
+                day = "7"
+
+                activity_info = Activity.objects.get(user_id_id=user_id, date__year=year, date__month=month,
+                                                            date__day=day)
+                if not activity_info:
+                        return Response(status=status.HTTP_404_NOT_FOUND)
+
+                activity_info.fall_count += 1
+                print(activity_info.fall_count)
+
+                data = QueryDict('', mutable=True)
+
+                data.setlist('day', ['7'])
+                data.setlist('month', ['6'])
+                data.setlist('user_id', ['gachon.mowa@gmail.com'])
+                data.setlist('year', ['2023'])
+
+                # 이후 serializer에 data를 사용
+                serializer = ActivitySerializer(activity_info, data=data)
+                
+                if serializer.is_valid():
+                    serializer.save()
+
         return JsonResponse({'success': True, 'file_count': file_count})
     return JsonResponse({'success': False})
 
 
-def count_files_with_prefix(prefix):
-    media_root = settings.MEDIA_ROOT
+def count_files_with_prefix(prefix, directory_path):
+    media_root = directory_path
     file_count = 0
 
     files = os.listdir(media_root)
