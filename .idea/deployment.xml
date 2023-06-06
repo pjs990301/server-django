@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="AWS" remoteFilesAllowedToDisappearOnAutoupload="false" showExcludedInSync="true">
+  <component name="PublishConfigData" serverName="Lab3" remoteFilesAllowedToDisappearOnAutoupload="false" showExcludedInSync="true">
     <serverData>
       <paths name="AWS">
         <serverdata>
@@ -9,7 +9,13 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="Lab3">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/Project/MoWA/server-django" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
     </serverData>
-    <option name="myAutoUpload" value="ALWAYS" />
   </component>
 </project>

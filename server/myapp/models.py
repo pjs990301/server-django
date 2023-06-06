@@ -11,8 +11,8 @@ class Users(models.Model):
     user_id = models.CharField(max_length=255, primary_key=True, unique=True)
     serial_number = models.JSONField(null=True, blank=True, default=serial_default)
     mac_address = models.TextField(max_length=10000, blank=True, null=True)
-    mode = models.CharField(max_length=255, default=False, blank=True, null=True)
-    status = models.CharField(max_length=255, default="empty", blank=True, null=True)
+    mode = models.BooleanField(default=False, blank=True, null=True)
+    status = models.CharField(max_length=255, default='empty', blank=True, null=True)
 
     def __str__(self):
         return self.user_id

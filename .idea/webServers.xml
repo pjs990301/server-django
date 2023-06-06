@@ -9,6 +9,13 @@
           </advancedOptions>
         </fileTransfer>
       </webServer>
+      <webServer id="86e5362d-8340-47c4-b7f4-8f8314b40afe" name="Lab3">
+        <fileTransfer rootFolder="/home/jisung" accessType="SFTP" host="192.9.200.45" port="142" sshConfigId="9f07c93b-d919-45ac-80e7-f41ebbf9f421" sshConfig="jisung@192.9.200.45:142 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
     </option>
   </component>
 </project>
